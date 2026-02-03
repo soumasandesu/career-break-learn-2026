@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,22 +47,22 @@ var userActivities = []userActivity{
 }
 
 func getAllUsers(c *gin.Context) {
-	c.IndentedJSON(200, users)
+	c.IndentedJSON(http.StatusOK, users)
 }
 
 func getUserByID(c *gin.Context) {
 	id := c.Param("id")
 	for _, u := range users {
 		if u.ID == id {
-			c.IndentedJSON(200, u)
+			c.IndentedJSON(http.StatusOK, u)
 			return
 		}
 	}
-	c.IndentedJSON(404, gin.H{"message": "user not found"})
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
 }
 
 func getUserActivities(c *gin.Context) {
-	c.IndentedJSON(200, userActivities)
+	c.IndentedJSON(http.StatusOK, userActivities)
 }
 
 func getUserActivitiesByUserID(c *gin.Context) {
@@ -74,7 +76,16 @@ func getUserActivitiesByUserID(c *gin.Context) {
 			}
 		}
 	}
-	c.IndentedJSON(200, activities)
+	c.IndentedJSON(http.StatusOK, activities)
+}
+
+func postUserActivity(c *gin.Context) {
+	var newActivity userActivity
+	if err := c.BindJSON(&newActivity); err != nil {
+		return
+	}
+	userActivities = append(userActivities, newActivity)
+	c.IndentedJSON(http.StatusCreated, newActivity)
 }
 
 func main() {
@@ -83,5 +94,6 @@ func main() {
 	r.GET("/users/:id", getUserByID)
 	r.GET("/activities", getUserActivities)
 	r.GET("/users/:id/activities", getUserActivitiesByUserID)
+	r.POST("/users/-/activities", postUserActivity)
 	r.Run()
 }
