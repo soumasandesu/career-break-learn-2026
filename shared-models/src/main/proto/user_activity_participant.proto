@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.test.charles.shared.models;
+
+option java_package = "com.test.charles.shared.models";
+option java_outer_classname = "UserActivityParticipantProto";
+option go_package = "charles/career-break-learn/user-service-golang/proto;proto";
+
+import "user_type.proto";
+
+message UserActivityParticipant {
+  UserType type = 1;
+  string id = 2;
+}

@@ -1,3 +1,13 @@
 spring:
   application:
     name: user-activity-event-processor
+  kafka:
+    bootstrap-servers: localhost:9092
+    streams:
+      application-id: user-activity-event-processor
+      input-topic: user-activities
+      output-topic: aggregated-activities
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        commit.interval.ms: 1000

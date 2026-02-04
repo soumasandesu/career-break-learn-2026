@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.test.charles.shared.models;
+
+option java_package = "com.test.charles.shared.models";
+option java_outer_classname = "UserActivityProto";
+option go_package = "charles/career-break-learn/user-service-golang/proto;proto";
+
+import "user_type.proto";
+import "user_activity_participant.proto";
+
+message UserActivity {
+  string feed_id = 1 [json_name = "feedId"];
+  repeated UserActivityParticipant participants = 2;
+  string action_text = 3 [json_name = "actionText"];
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'career-break-learn'
+
+include 'shared-models'
+include 'user-activity-event-processor'

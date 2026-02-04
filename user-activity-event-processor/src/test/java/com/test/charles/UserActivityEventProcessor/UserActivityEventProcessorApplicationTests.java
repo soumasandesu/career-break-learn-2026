@@ -1,4 +1,4 @@
-package com.test.charles.user_activity_event_processor;
+package com.test.charles.UserActivityEventProcessor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

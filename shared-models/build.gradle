@@ -1,0 +1,33 @@
+plugins {
+	id 'com.google.protobuf' version '0.9.4'
+}
+
+protobuf {
+	protoc {
+		artifact = 'com.google.protobuf:protoc:3.25.1'
+	}
+	generateProtoTasks {
+		all().each { task ->
+			task.builtins {
+				java {
+					option 'java_multiple_files=true'
+				}
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		proto {
+			srcDir 'src/main/proto'
+		}
+	}
+}
+
+dependencies {
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations'
+	implementation 'com.google.protobuf:protobuf-java:3.25.1'
+}
