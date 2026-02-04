@@ -4,13 +4,14 @@ package com.test.charles.shared.models;
 
 option java_package = "com.test.charles.shared.models";
 option java_outer_classname = "UserActivityProto";
+option java_multiple_files = true;
 option go_package = "charles/career-break-learn/user-service-golang/proto;proto";
 
-import "user_type.proto";
-import "user_activity_participant.proto";
+import "user_activity_referring.proto";
 
 message UserActivity {
   string feed_id = 1 [json_name = "feedId"];
-  repeated UserActivityParticipant participants = 2;
-  string action_text = 3 [json_name = "actionText"];
+  repeated UserActivityReferring subject_referring = 2 [json_name = "subjectReferring"];
+  repeated UserActivityReferring object_referring = 3 [json_name = "objectReferring"];
+  string action_text_template = 4 [json_name = "actionTextTemplate"];
 }

@@ -3,12 +3,11 @@ syntax = "proto3";
 package com.test.charles.shared.models;
 
 option java_package = "com.test.charles.shared.models";
-option java_outer_classname = "UserActivityParticipantProto";
+option java_outer_classname = "UserTypeProto";
+option java_multiple_files = true;
 option go_package = "charles/career-break-learn/user-service-golang/proto;proto";
 
-import "user_type.proto";
-
-message UserActivityParticipant {
-  UserType type = 1;
-  string id = 2;
+enum ReferringType {
+  USER = 0;
+  POST = 1;
 }

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -39,7 +38,7 @@ public class SimilarMessageAggregator {
 
 		// Parse JSON to UserActivity
 		final KStream<String, UserActivity> activityStream = sourceStream
-				.mapValues((readOnlyKey, jsonValue) -> {
+				.mapValues((_, jsonValue) -> {
 					try {
 						return objectMapper.readValue(jsonValue, UserActivity.class);
 					} catch (Exception e) {
@@ -47,12 +46,12 @@ public class SimilarMessageAggregator {
 						return null;
 					}
 				})
-				.filter((key, value) -> value != null);
+				.filter((_, value) -> value != null);
 
 		// Group by a similarity key (e.g., same participants or action text)
 		// Using participants as the grouping key for similarity
 		final KGroupedStream<String, UserActivity> groupedStream = activityStream
-				.map((key, activity) -> {
+				.map((_, activity) -> {
 					final String similarityKey = generateSimilarityKey(activity);
 					return KeyValue.pair(similarityKey, activity);
 				})
@@ -65,16 +64,19 @@ public class SimilarMessageAggregator {
 		// Aggregate into List, then convert to JSON string
 		// Note: We use default serde for the aggregate value and handle serialization in mapValues
 		final KTable<Windowed<String>, String> aggregatedTable = windowedStream
-				.aggregate(
-                        ArrayList::new,
-						(_, activity, aggregate) -> {
-							aggregate.add(activity);
-							return aggregate;
-						},
-						Materialized.<String, List<UserActivity>, org.apache.kafka.streams.state.WindowStore<org.apache.kafka.common.utils.Bytes, byte[]>>as("aggregated-activities-store")
-								.withKeySerde(Serdes.String())
-				)
-				.mapValues(this::serializeActivities);
+				.reduce(new Reducer<UserActivity>() {
+					@Override
+					public UserActivity apply(UserActivity a, UserActivity b) {
+						// both object list of a & b should be same
+						return UserActivity.newBuilder()
+								.addAllObjectReferring(a.getObjectReferringList())
+								.addAllSubjectReferring(a.getSubjectReferringList())
+								.addAllSubjectReferring(b.getSubjectReferringList())
+								.setActionTextTemplate(a.getActionTextTemplate())
+								.build();
+					}
+				})
+				.mapValues(this::serializeActivity);
 
 		// Convert back to stream and output
 		aggregatedTable
@@ -97,19 +99,32 @@ public class SimilarMessageAggregator {
 		final StringBuilder keyBuilder = new StringBuilder();
 		
 		// Sort participant IDs for consistent grouping
-		final List<String> participantIds = activity.getParticipants().stream()
-				.map(participant -> participant.getId())
+//		final List<String> subjectParticipantIds = activity.getSubjectReferringList()
+//				.stream()
+//				.map(participant -> "%s#%s".formatted(
+//						participant.getType(),
+//						participant.getId()
+//				))
+//				.sorted()
+//				.toList();
+//		keyBuilder.append(String.join("-", subjectParticipantIds));
+//		keyBuilder.append(":");
+		final List<String> objectParticipantIds = activity.getSubjectReferringList()
+				.stream()
+				.map(participant -> "%s#%s".formatted(
+						participant.getType(),
+						participant.getId()
+				))
 				.sorted()
 				.toList();
-		
-		keyBuilder.append(String.join("-", participantIds));
+		keyBuilder.append(String.join("-", objectParticipantIds));
 		keyBuilder.append(":");
-		keyBuilder.append(activity.getActionText());
+		keyBuilder.append(activity.getActionTextTemplate());
 		
 		return keyBuilder.toString();
 	}
 
-	private String serializeActivities(final List<UserActivity> activities) {
+	private String serializeActivity(final UserActivity activities) {
 		try {
 			return objectMapper.writeValueAsString(activities);
 		} catch (Exception e) {

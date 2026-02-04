@@ -22,12 +22,13 @@ const (
 )
 
 type UserActivity struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
-	FeedId        string                     `protobuf:"bytes,1,opt,name=feed_id,json=feedId,proto3" json:"feed_id,omitempty"`
-	Participants  []*UserActivityParticipant `protobuf:"bytes,2,rep,name=participants,proto3" json:"participants,omitempty"`
-	ActionText    string                     `protobuf:"bytes,3,opt,name=action_text,json=actionText,proto3" json:"action_text,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState   `protogen:"open.v1"`
+	FeedId             string                   `protobuf:"bytes,1,opt,name=feed_id,json=feedId,proto3" json:"feed_id,omitempty"`
+	SubjectReferring   []*UserActivityReferring `protobuf:"bytes,2,rep,name=subject_referring,json=subjectReferring,proto3" json:"subject_referring,omitempty"`
+	ObjectReferring    []*UserActivityReferring `protobuf:"bytes,3,rep,name=object_referring,json=objectReferring,proto3" json:"object_referring,omitempty"`
+	ActionTextTemplate string                   `protobuf:"bytes,4,opt,name=action_text_template,json=actionTextTemplate,proto3" json:"action_text_template,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UserActivity) Reset() {
@@ -67,16 +68,23 @@ func (x *UserActivity) GetFeedId() string {
 	return ""
 }
 
-func (x *UserActivity) GetParticipants() []*UserActivityParticipant {
+func (x *UserActivity) GetSubjectReferring() []*UserActivityReferring {
 	if x != nil {
-		return x.Participants
+		return x.SubjectReferring
 	}
 	return nil
 }
 
-func (x *UserActivity) GetActionText() string {
+func (x *UserActivity) GetObjectReferring() []*UserActivityReferring {
 	if x != nil {
-		return x.ActionText
+		return x.ObjectReferring
+	}
+	return nil
+}
+
+func (x *UserActivity) GetActionTextTemplate() string {
+	if x != nil {
+		return x.ActionTextTemplate
 	}
 	return ""
 }
@@ -85,13 +93,13 @@ var File_user_activity_proto protoreflect.FileDescriptor
 
 const file_user_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x13user_activity.proto\x12\x1ecom.test.charles.shared.models\x1a\x0fuser_type.proto\x1a\x1fuser_activity_participant.proto\"\xa5\x01\n" +
+	"\x13user_activity.proto\x12\x1ecom.test.charles.shared.models\x1a\x1duser_activity_referring.proto\"\x9f\x02\n" +
 	"\fUserActivity\x12\x17\n" +
-	"\afeed_id\x18\x01 \x01(\tR\x06feedId\x12[\n" +
-	"\fparticipants\x18\x02 \x03(\v27.com.test.charles.shared.models.UserActivityParticipantR\fparticipants\x12\x1f\n" +
-	"\vaction_text\x18\x03 \x01(\tR\n" +
-	"actionTextBo\n" +
-	"\x1ecom.test.charles.shared.modelsB\x11UserActivityProtoZ:charles/career-break-learn/user-service-golang/proto;protob\x06proto3"
+	"\afeed_id\x18\x01 \x01(\tR\x06feedId\x12b\n" +
+	"\x11subject_referring\x18\x02 \x03(\v25.com.test.charles.shared.models.UserActivityReferringR\x10subjectReferring\x12`\n" +
+	"\x10object_referring\x18\x03 \x03(\v25.com.test.charles.shared.models.UserActivityReferringR\x0fobjectReferring\x120\n" +
+	"\x14action_text_template\x18\x04 \x01(\tR\x12actionTextTemplateBq\n" +
+	"\x1ecom.test.charles.shared.modelsB\x11UserActivityProtoP\x01Z:charles/career-break-learn/user-service-golang/proto;protob\x06proto3"
 
 var (
 	file_user_activity_proto_rawDescOnce sync.Once
@@ -107,16 +115,17 @@ func file_user_activity_proto_rawDescGZIP() []byte {
 
 var file_user_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_user_activity_proto_goTypes = []any{
-	(*UserActivity)(nil),            // 0: com.test.charles.shared.models.UserActivity
-	(*UserActivityParticipant)(nil), // 1: com.test.charles.shared.models.UserActivityParticipant
+	(*UserActivity)(nil),          // 0: com.test.charles.shared.models.UserActivity
+	(*UserActivityReferring)(nil), // 1: com.test.charles.shared.models.UserActivityReferring
 }
 var file_user_activity_proto_depIdxs = []int32{
-	1, // 0: com.test.charles.shared.models.UserActivity.participants:type_name -> com.test.charles.shared.models.UserActivityParticipant
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 0: com.test.charles.shared.models.UserActivity.subject_referring:type_name -> com.test.charles.shared.models.UserActivityReferring
+	1, // 1: com.test.charles.shared.models.UserActivity.object_referring:type_name -> com.test.charles.shared.models.UserActivityReferring
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_user_activity_proto_init() }
@@ -124,8 +133,7 @@ func file_user_activity_proto_init() {
 	if File_user_activity_proto != nil {
 		return
 	}
-	file_user_type_proto_init()
-	file_user_activity_participant_proto_init()
+	file_user_activity_referring_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

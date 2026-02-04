@@ -3,12 +3,14 @@ syntax = "proto3";
 package com.test.charles.shared.models;
 
 option java_package = "com.test.charles.shared.models";
-option java_outer_classname = "UserProto";
+option java_outer_classname = "UserActivityParticipantProto";
 option java_multiple_files = true;
 option go_package = "charles/career-break-learn/user-service-golang/proto;proto";
 
-message User {
-  string id = 1;
-  string name = 2;
-  string last_seen = 3 [json_name = "lastSeen"];
+import "referring_type.proto";
+
+message UserActivityReferring {
+  ReferringType type = 1;
+  string id = 2;
+  string user_id = 3 [json_name = "userId"];
 }

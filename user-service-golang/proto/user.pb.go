@@ -90,8 +90,8 @@ const file_user_proto_rawDesc = "" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tlast_seen\x18\x03 \x01(\tR\blastSeenBg\n" +
-	"\x1ecom.test.charles.shared.modelsB\tUserProtoZ:charles/career-break-learn/user-service-golang/proto;protob\x06proto3"
+	"\tlast_seen\x18\x03 \x01(\tR\blastSeenBi\n" +
+	"\x1ecom.test.charles.shared.modelsB\tUserProtoP\x01Z:charles/career-break-learn/user-service-golang/proto;protob\x06proto3"
 
 var (
 	file_user_proto_rawDescOnce sync.Once
