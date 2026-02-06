@@ -19,14 +19,14 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class SimilarMessageAggregator {
+public class UserActivitiesAggregator {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Value("${spring.kafka.streams.input-topic:user-activities}")
 	private final String inputTopic;
 
-	@Value("${spring.kafka.streams.output-topic:aggregated-activities}")
+	@Value("${spring.kafka.streams.output-topic:aggregated-user-activities}")
 	private final String outputTopic;
 
 	@Autowired
